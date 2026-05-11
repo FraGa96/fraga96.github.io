@@ -54,7 +54,7 @@ a:hover {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--color-accent);
+  background: rgba(255, 255, 255, 0.15);
   border-radius: 3px;
 }
 
@@ -80,7 +80,34 @@ a:hover {
   display: flex;
   flex-direction: column;
   scrollbar-width: thin;
-  scrollbar-color: var(--color-accent) transparent;
+  scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+}
+
+/* ─── Sidebar Header ─────────────────────────────────────────────────────────── */
+.sidebar__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.sidebar__social {
+  display: flex;
+  gap: 0.625rem;
+  align-items: center;
+}
+
+.sidebar__social-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  transition: color var(--transition-base);
+}
+
+.sidebar__social-link:hover {
+  color: var(--color-accent);
 }
 
 /* ─── Avatar ────────────────────────────────────────────────────────────────── */
@@ -92,7 +119,6 @@ a:hover {
   height: 72px;
   border-radius: 50%;
   background: var(--color-accent);
-  margin-bottom: 1rem;
   flex-shrink: 0;
 }
 
@@ -176,33 +202,6 @@ a:hover {
   color: var(--color-text-muted);
 }
 
-/* ─── Contact List ───────────────────────────────────────────────────────────── */
-.contact-list {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.contact-link {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.8125rem;
-  color: var(--color-text-muted);
-  text-decoration: none;
-  transition: color var(--transition-base);
-}
-
-.contact-link:hover {
-  color: var(--color-accent);
-  text-decoration: none;
-}
-
-.contact-link svg {
-  flex-shrink: 0;
-  color: var(--color-accent);
-}
 
 /* ─── Main Content ───────────────────────────────────────────────────────────── */
 .main-content {
