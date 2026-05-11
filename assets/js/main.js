@@ -1,24 +1,54 @@
-const ARTICLE_URLS = [
-  'https://medium.com/@andy.gfg96/merge-squash-and-rebase-7043f017449',
-  'https://medium.com/@andy.gfg96/web-accessibility-and-good-practices-cbeb0ae71b5b'
-];
-
-const MICROLINK_BASE = 'https://api.microlink.io';
+const MEDIUM_USERNAME    = 'andy.gfg96';
+const RSS_FEED_URL       = `https://medium.com/feed/@${MEDIUM_USERNAME}`;
+const RSS2JSON_BASE      = 'https://api.rss2json.com/v1/api.json';
+const MAX_ARTICLES       = 6;
 const CARDS_CONTAINER_ID = 'article-cards';
+const PLACEHOLDER_IMG    =
+  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' " +
+  "height='450' viewBox='0 0 800 450'%3E%3Crect width='800' height='450' " +
+  "fill='%231e293b'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' " +
+  "text-anchor='middle' font-family='sans-serif' font-size='48' " +
+  "fill='%237c3aed'%3EM%3C/text%3E%3C/svg%3E";
 
-async function fetchOGData(url) {
-  const key = `og_${url}`;
-  const cached = sessionStorage.getItem(key);
+async function fetchRSSArticles() {
+  const cacheKey = 'rss_medium_articles';
+  const cached = sessionStorage.getItem(cacheKey);
   if (cached) return JSON.parse(cached);
 
-  const apiUrl = `${MICROLINK_BASE}?url=${encodeURIComponent(url)}`;
-  const response = await fetch(apiUrl);
-  if (!response.ok) throw new Error(`Microlink ${response.status}`);
-  const json = await response.json();
-  if (json.status !== 'success') throw new Error('Microlink non-success');
+  const params = new URLSearchParams({ rss_url: RSS_FEED_URL });
+  const res = await fetch(`${RSS2JSON_BASE}?${params}`);
+  if (!res.ok) throw new Error(`rss2json HTTP ${res.status}`);
+  const json = await res.json();
+  if (json.status !== 'ok') throw new Error(`rss2json error: ${json.message || 'unknown'}`);
 
-  sessionStorage.setItem(key, JSON.stringify(json.data));
-  return json.data;
+  const items = json.items.slice(0, MAX_ARTICLES);
+  sessionStorage.setItem(cacheKey, JSON.stringify(items));
+  return items;
+}
+
+function extractImgFromHtml(html) {
+  const tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  for (const img of tmp.querySelectorAll('img')) {
+    if (!img.src.includes('medium.com/_/stat')) return img.src;
+  }
+  return null;
+}
+
+function stripHtml(html) {
+  const tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  return (tmp.textContent || tmp.innerText || '').trim();
+}
+
+function truncate(str, maxLen) {
+  return str.length > maxLen ? str.slice(0, maxLen).trimEnd() + '…' : str;
+}
+
+function formatDate(pubDate) {
+  const d = new Date(pubDate);
+  if (isNaN(d.getTime())) return '';
+  return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
 }
 
 function buildSkeletonCard() {
@@ -44,46 +74,56 @@ function buildSkeletonCard() {
   return card;
 }
 
-function buildArticleCard(data, originalUrl) {
+function buildArticleCard(item) {
   const card = document.createElement('a');
   card.className = 'article-card card';
-  card.href = data.url || originalUrl;
+  card.href = item.link;
   card.target = '_blank';
   card.rel = 'noopener noreferrer';
-  card.setAttribute('aria-label', data.title || 'Read article');
+  card.setAttribute('aria-label', item.title || 'Read article on Medium');
 
-  if (data.image?.url) {
-    const img = document.createElement('img');
-    img.className = 'article-card__image';
-    img.src = data.image.url;
-    img.alt = '';
-    img.loading = 'lazy';
-    card.appendChild(img);
-  }
+  const img = document.createElement('img');
+  img.className = 'article-card__image';
+  img.src = item.thumbnail || extractImgFromHtml(item.description) || PLACEHOLDER_IMG;
+  img.alt = '';
+  img.loading = 'lazy';
+  card.appendChild(img);
 
-  if (data.publisher) {
-    const pub = document.createElement('p');
-    pub.className = 'article-card__publisher';
-    pub.textContent = data.publisher;
-    card.appendChild(pub);
-  }
+  const body = document.createElement('div');
+  body.className = 'article-card__body';
+
+  const pub = document.createElement('p');
+  pub.className = 'article-card__publisher';
+  pub.textContent = 'Medium';
+  body.appendChild(pub);
 
   const title = document.createElement('h3');
   title.className = 'article-card__title';
-  title.textContent = data.title || 'Read Article';
-  card.appendChild(title);
+  title.textContent = item.title || 'Read Article';
+  body.appendChild(title);
 
-  if (data.description) {
+  const rawText = stripHtml(item.description || '');
+  if (rawText) {
     const desc = document.createElement('p');
     desc.className = 'article-card__description';
-    desc.textContent = data.description;
-    card.appendChild(desc);
+    desc.textContent = truncate(rawText, 160);
+    body.appendChild(desc);
   }
 
+  const dateStr = formatDate(item.pubDate);
+  if (dateStr) {
+    const date = document.createElement('p');
+    date.className = 'article-card__date';
+    date.textContent = dateStr;
+    body.appendChild(date);
+  }
+
+  card.appendChild(body);
   return card;
 }
 
-function buildFallbackCard(url) {
+function buildFallbackCard() {
+  const url = `https://medium.com/@${MEDIUM_USERNAME}`;
   const card = document.createElement('a');
   card.className = 'article-card card';
   card.href = url;
@@ -92,7 +132,7 @@ function buildFallbackCard(url) {
 
   const title = document.createElement('h3');
   title.className = 'article-card__title';
-  title.textContent = 'Read Article on Medium';
+  title.textContent = 'View Articles on Medium';
   card.appendChild(title);
 
   const desc = document.createElement('p');
@@ -107,23 +147,28 @@ async function initArticleCards() {
   const container = document.getElementById(CARDS_CONTAINER_ID);
   if (!container) return;
 
-  const skeletons = ARTICLE_URLS.map(() => {
-    const skeleton = buildSkeletonCard();
-    container.appendChild(skeleton);
-    return skeleton;
+  const skeletons = Array.from({ length: MAX_ARTICLES }, () => {
+    const s = buildSkeletonCard();
+    container.appendChild(s);
+    return s;
   });
 
-  const results = await Promise.allSettled(
-    ARTICLE_URLS.map(url => fetchOGData(url))
-  );
+  let items = [];
+  try {
+    items = await fetchRSSArticles();
+  } catch (err) {
+    console.error('Failed to load Medium articles:', err);
+    skeletons.forEach(s => container.removeChild(s));
+    container.appendChild(buildFallbackCard());
+    return;
+  }
 
-  results.forEach((result, i) => {
-    const realCard =
-      result.status === 'fulfilled'
-        ? buildArticleCard(result.value, ARTICLE_URLS[i])
-        : buildFallbackCard(ARTICLE_URLS[i]);
-
-    container.replaceChild(realCard, skeletons[i]);
+  skeletons.forEach((skeleton, i) => {
+    if (i < items.length) {
+      container.replaceChild(buildArticleCard(items[i]), skeleton);
+    } else {
+      container.removeChild(skeleton);
+    }
   });
 }
 

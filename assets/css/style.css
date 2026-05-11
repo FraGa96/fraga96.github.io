@@ -476,6 +476,13 @@ a:hover {
   flex: 1;
 }
 
+.article-card__date {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  margin-top: auto;
+  padding-top: 0.5rem;
+}
+
 /* Article cards without image (fallback / no image) get standard padding */
 .article-card:not(:has(.article-card__image)) {
   padding: 1.25rem 1.5rem;
