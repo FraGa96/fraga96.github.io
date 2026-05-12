@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#1e293b"/>
+  <circle cx="600" cy="265" r="150" fill="#7c3aed"/>
+  <text x="600" y="265" dy="0.35em"
+        font-family="Inter, system-ui, -apple-system, sans-serif"
+        font-size="108" font-weight="700" fill="#fff"
+        text-anchor="middle" letter-spacing="4">GF</text>
+  <text x="600" y="468"
+        font-family="Inter, system-ui, -apple-system, sans-serif"
+        font-size="44" font-weight="600" fill="#e2e8f0"
+        text-anchor="middle">Gilary Franco</text>
+  <text x="600" y="530"
+        font-family="Inter, system-ui, -apple-system, sans-serif"
+        font-size="28" font-weight="400" fill="#94a3b8"
+        text-anchor="middle">Frontend Developer</text>
+</svg>
