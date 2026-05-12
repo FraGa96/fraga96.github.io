@@ -632,6 +632,77 @@ a:hover {
   text-decoration: none;
 }
 
+/* ─── Certificate Modal ──────────────────────────────────────────────────────── */
+#cert-modal {
+  position: fixed;
+  margin: auto;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-badge);
+  background: var(--color-card-bg);
+  width: min(90vw, 900px);
+  height: min(90vh, 700px);
+  flex-direction: column;
+}
+
+#cert-modal[open] {
+  display: flex;
+}
+
+#cert-modal::backdrop {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.cert-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.75rem;
+  gap: 1rem;
+}
+
+.cert-modal__external {
+  font-size: 0.75rem;
+  color: var(--color-accent-text);
+  text-decoration: none;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: opacity var(--transition-base);
+}
+
+.cert-modal__external:hover {
+  opacity: 0.8;
+}
+
+.cert-modal__close {
+  background: none;
+  border: none;
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 1.25rem;
+  cursor: pointer;
+  line-height: 1;
+  transition: color var(--transition-base);
+}
+
+.cert-modal__close:hover {
+  color: var(--color-text);
+}
+
+.cert-modal__frame {
+  flex: 1;
+  width: 100%;
+  border: none;
+  border-radius: 0 0 var(--radius-badge) var(--radius-badge);
+}
+
+button.cert-item__link {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
 /* ─── Responsive ─────────────────────────────────────────────────────────────── */
 @media (max-width: 767px) {
   .layout {

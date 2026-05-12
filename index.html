@@ -281,22 +281,18 @@
 
           <li class="cert-item">
             <span class="cert-item__name">AWS Cloud Computing – DW Training</span>
-            <a
+            <button
               class="cert-item__link"
-              href="https://drive.google.com/file/d/1dqBUofq7rba10GOqigdZnVKNbPWCEzcQ/view?usp=drive_link"
-              target="_blank"
-              rel="noopener noreferrer"
-            >View Certificate ↗</a>
+              data-cert-url="https://drive.google.com/file/d/1dqBUofq7rba10GOqigdZnVKNbPWCEzcQ/view"
+            >View Certificate</button>
           </li>
 
           <li class="cert-item">
             <span class="cert-item__name">AWS Architecture – DW Training</span>
-            <a
+            <button
               class="cert-item__link"
-              href="https://drive.google.com/file/d/1xB0wnV1vJGNHFO5WfES6I_irdWWE82EG/view?pli=1"
-              target="_blank"
-              rel="noopener noreferrer"
-            >View Certificate ↗</a>
+              data-cert-url="https://drive.google.com/file/d/1xB0wnV1vJGNHFO5WfES6I_irdWWE82EG/view"
+            >View Certificate</button>
           </li>
 
           <li class="cert-item">
@@ -314,5 +310,13 @@
   </div>
 
   <script src="assets/js/main.js"></script>
+
+  <dialog id="cert-modal" aria-label="Certificate preview">
+    <div class="cert-modal__header">
+      <a class="cert-modal__external" id="cert-modal-external" href="#" target="_blank" rel="noopener noreferrer">Open in Google Drive ↗</a>
+      <button class="cert-modal__close" aria-label="Close">&#x2715;</button>
+    </div>
+    <iframe class="cert-modal__frame" title="Certificate" src="" tabindex="-1" allowfullscreen></iframe>
+  </dialog>
 </body>
 </html>
