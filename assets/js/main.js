@@ -192,6 +192,10 @@ function initCertModal() {
       opener = btn;
       externalLink.href = btn.dataset.certUrl;
       frame.src = embedUrl;
+      const certName = btn.closest('.cert-subitem, .cert-item')
+        ?.querySelector('.cert-subitem__name, .cert-item__name')
+        ?.textContent?.trim();
+      modal.setAttribute('aria-label', certName ? `Certificate: ${certName}` : 'Certificate preview');
       modal.showModal();
       closeBtn.focus();
     });
