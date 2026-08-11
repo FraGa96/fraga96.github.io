@@ -553,6 +553,29 @@ a:hover {
   width: 90%;
 }
 
+/* ─── Projects ───────────────────────────────────────────────────────────────── */
+.project-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.project-card__description {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  line-height: 1.55;
+}
+
+.project-card__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-weight: 600;
+  font-size: 0.8125rem;
+  color: var(--color-accent-text);
+  text-decoration: underline;
+}
+
 /* ─── Academic History ───────────────────────────────────────────────────────── */
 .academic-list {
   display: flex;
